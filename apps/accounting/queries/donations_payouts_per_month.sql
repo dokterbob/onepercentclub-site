@@ -1,5 +1,9 @@
 ﻿-- Monthly aggregate of donations versus payouts
-WITH donations AS (
+WITH payment_methods AS (
+    SELECT DISTINCT
+      order_id, payment_method_id AS payment_method
+    FROM public.cowry_payment AS payments
+), donations AS (
     SELECT
       date_trunc('month', donations.ready)::date AS month,
       COUNT(donations.id),
@@ -8,7 +12,11 @@ WITH donations AS (
       fund_donation AS donations
     JOIN
       projects_project AS projects ON projects.id = donations.project_id
-    WHERE status IN ('paid', 'pending')
+    LEFT JOIN
+      payment_methods ON payment_methods.order_id = donations.order_id
+    WHERE
+      donations.status IN ('paid', 'pending') AND
+      NOT payment_methods.payment_method = 'legacy'
     GROUP BY month
     ORDER BY month
 ), payouts AS (

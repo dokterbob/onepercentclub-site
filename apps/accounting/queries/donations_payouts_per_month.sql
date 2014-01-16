@@ -1,7 +1,7 @@
 ﻿-- Monthly aggregate of donations versus payouts
 WITH donations AS (
     SELECT
-      date_trunc('month', donations.created)::date AS month,
+      date_trunc('month', donations.ready)::date AS month,
       COUNT(donations.id),
       SUM(donations.amount/100.0)::numeric(12,2) AS amount
     FROM
@@ -13,7 +13,7 @@ WITH donations AS (
     ORDER BY month
 ), payouts AS (
     SELECT
-      date_trunc('month', created)::date AS month,
+      date_trunc('month', completed)::date AS month,
       COUNT(id),
       SUM(amount_raised) AS amount_raised,
       SUM(organization_fee) AS organization_fee,

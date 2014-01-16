@@ -2,7 +2,7 @@
 WITH donations AS (
     SELECT
       project_id,
-      MAX(donations.created::date) AS last_donation,
+      MAX(donations.ready::date) AS donation_ready,
       COUNT(donations.id),
       SUM(amount/100.0)::numeric(12,2) AS amount
     FROM
@@ -11,13 +11,13 @@ WITH donations AS (
       projects_project AS projects ON projects.id = donations.project_id
     WHERE
      status IN ('paid', 'pending') AND
-     donations.created BETWEEN '2013-01-01' AND '2014-01-01'
+     donations.ready BETWEEN '2013-01-01' AND '2014-01-01'
     GROUP BY project_id
     ORDER BY project_id
 ), payouts AS (
     SELECT
       project_id,
-      MAX(created::date) AS last_payout,
+      MAX(completed::date) AS completed,
       COUNT(id),
       SUM(amount_raised) AS amount_raised,
       SUM(organization_fee) AS organization_fee,

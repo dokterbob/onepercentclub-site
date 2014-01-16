@@ -2,7 +2,7 @@
 WITH donations AS (
     SELECT
       project_id,
-      MAX(donations.ready::date) AS donation_ready,
+      MAX(donations.ready::date) AS last_donation,
       COUNT(donations.id),
       SUM(amount/100.0)::numeric(12,2) AS amount
     FROM

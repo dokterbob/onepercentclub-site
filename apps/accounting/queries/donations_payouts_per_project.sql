@@ -38,7 +38,7 @@ SELECT
   payouts.amount_raised AS payouts_amount_raised,
   payouts.organization_fee AS payouts_organization_fee,
   payouts.amount_payable AS payouts_amount_paid,
-  donations.amount - payouts.amount_raised AS amount_payable
+  donations.amount - coalesce(payouts.amount_raised, 0.0) AS amount_payable
 FROM
   donations
 LEFT JOIN payouts

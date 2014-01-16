@@ -1,5 +1,9 @@
 -- Per project aggregate of donations versus payouts
-WITH donations AS (
+WITH payment_methods AS (
+    SELECT DISTINCT
+      order_id, payment_method_id AS payment_method
+    FROM public.cowry_payment AS payments
+), donations AS (
     SELECT
       project_id,
       MAX(donations.ready::date) AS last_donation,
@@ -9,9 +13,12 @@ WITH donations AS (
       fund_donation AS donations
     JOIN
       projects_project AS projects ON projects.id = donations.project_id
+    LEFT JOIN
+      payment_methods ON payment_methods.order_id = donations.order_id
     WHERE
-     status IN ('paid', 'pending') AND
-     donations.ready BETWEEN '2013-01-01' AND '2014-01-01'
+      status IN ('paid', 'pending') AND
+      donations.ready BETWEEN '2013-01-01' AND '2014-01-01' AND
+      NOT payment_methods.payment_method = 'legacy'
     GROUP BY project_id
     ORDER BY project_id
 ), payouts AS (

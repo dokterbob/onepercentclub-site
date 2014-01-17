@@ -15,8 +15,7 @@ WITH payment_methods AS (
     LEFT JOIN
       payment_methods ON payment_methods.order_id = donations.order_id
     WHERE
-      donations.status IN ('paid', 'pending') AND
-      NOT payment_methods.payment_method = 'legacy'
+      donations.status IN ('paid', 'pending')
     GROUP BY month
     ORDER BY month
 ), payouts AS (

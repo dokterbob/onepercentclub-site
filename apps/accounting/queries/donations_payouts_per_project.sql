@@ -17,63 +17,7 @@ WITH payment_methods AS (
       payment_methods ON payment_methods.order_id = donations.order_id
     WHERE
       status IN ('paid', 'pending') AND
-      donations.ready BETWEEN '2013-01-01' AND '2014-01-01' AND
-      NOT payment_methods.payment_method = 'legacy'
-    GROUP BY project_id
-    ORDER BY project_id
-), payouts AS (
-    SELECT
-      project_id,
-      MAX(completed::date) AS completed,
-      COUNT(id),
-      SUM(amount_raised) AS amount_raised,
-      SUM(organization_fee) AS organization_fee,
-      SUM(amount_payable) AS amount_payable
-    FROM
-      payouts_payout AS payouts
-    WHERE status IN ('progress', 'completed')
-    GROUP BY project_id
-    ORDER BY project_id
-)
-SELECT
-  projects.id,
-  projects.title,
-  donations.last_donation,
-  donations.count AS donation_count,
-  donations.amount AS donations,
-  payouts.count AS payouts_count,
-  payouts.completed AS payout_date,
-  payouts.amount_raised AS payouts_amount_raised,
-  payouts.organization_fee AS payouts_organization_fee,
-  payouts.amount_payable AS payouts_amount_paid,
-  donations.amount - coalesce(payouts.amount_raised, 0.0) AS amount_payable
-FROM
-  donations
-LEFT JOIN payouts
-  ON payouts.project_id = donations.project_id
-JOIN projects_project AS projects
-  ON donations.project_id = projects.id
-
--- All donations t/m 7-8-2014
-WITH payment_methods AS (
-    SELECT DISTINCT
-      order_id, payment_method_id AS payment_method
-    FROM public.cowry_payment AS payments
-), donations AS (
-    SELECT
-      project_id,
-      MAX(donations.ready::date) AS last_donation,
-      COUNT(donations.id),
-      SUM(amount/100.0)::numeric(12,2) AS amount
-    FROM
-      fund_donation AS donations
-    JOIN
-      projects_project AS projects ON projects.id = donations.project_id
-    LEFT JOIN
-      payment_methods ON payment_methods.order_id = donations.order_id
-    WHERE
-      status IN ('paid', 'pending') AND
-      donations.ready <= '2014-08-07'
+      donations.ready BETWEEN '2013-01-01' AND '2014-01-01'
     GROUP BY project_id
     ORDER BY project_id
 ), payouts AS (

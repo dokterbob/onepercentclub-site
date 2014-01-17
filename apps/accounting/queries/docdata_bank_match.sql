@@ -1,4 +1,11 @@
 -- Paid out (Docdata payout exports) versus received (bank statements) funds
+--
+-- Fields:
+-- - month: month of bank's book date resp. end of Docdata's payout period
+-- - amount_out: monthly total transferred to bank account according to Docdata
+-- - amount_in: monthly total of incoming bank transactions from Docdata according to bank statements
+-- - difference: amount_out - amount_in
+-- - running_difference: difference running over months
 
 WITH docdata_bank_in AS (
   -- Incoming money from Docdata

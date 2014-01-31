@@ -288,6 +288,16 @@ class PayoutTestCase(SepaXMLTestMixin, TestCase):
         tree = etree.XML(xml)
         self.xmlschema.assertValid(tree)
 
+        # Test content
+        main = tree[0]
+        header = main[0]
+
+        # Number of transactions
+        self.assertEqual(header[2].text, "1")
+
+        # Total amount
+        self.assertEqual(header[3].text, '13.95')
+
 
 class OrganizationPayoutTestCase(TestCase):
     """ Test case for OrganizationPayout. """
